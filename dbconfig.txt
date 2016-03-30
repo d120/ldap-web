@@ -1,0 +1,11 @@
+<?php
+# copy this to .dbconfig.php and modify according to your LDAP system
+
+$ldapHost = "localhost";
+$baseDN = "dc=example,dc=org";
+$peopleBase = "ou=People,$baseDN";
+$groupBase = "ou=Group,$baseDN";
+
+$serviceBindDN = "cn=something,ou=Services,$baseDN";
+$serviceBindPassword = "someprettysecurepasswordgoeshere";
+
