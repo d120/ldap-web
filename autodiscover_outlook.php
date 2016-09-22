@@ -9,6 +9,8 @@ $userDisplayName = "FEHLER: Benutzer nicht gefunden";
 $postxml = file_get_contents("php://input");
 if (1 === preg_match( "#<emailaddress>([a-zA-Z0-9.@-]+)</emailaddress>#i", $postxml, $emailaddress )) {
   $searchFor = ldap_escape($emailaddress[1], null, LDAP_ESCAPE_FILTER);
+  if (strstr($searchFor, '@')) $searchFor = substr($searchFor, 0, strpos($searchFor, '@'));
+
   $sr = ldap_search($ds, $peopleBase, "(mail=$searchFor)", [ "uid","displayName","mobile","homePhone" ]);
   $users = ldap_get_entries($ds, $sr);
 

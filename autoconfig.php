@@ -5,8 +5,9 @@ include ("/var/www/html/usermgmt/.init.php");
 ldap_bind($ds, $serviceBindDN, $serviceBindPassword);
 
 $searchFor = ldap_escape(urldecode($_GET["emailaddress"]), null, LDAP_ESCAPE_FILTER);
+if (strstr($searchFor, '@')) $searchFor = substr($searchFor, 0, strpos($searchFor, '@'));
 
-$sr = ldap_search($ds, $peopleBase, "(mail=$searchFor)", [ "uid","displayName","mobile","homePhone" ]);
+$sr = ldap_search($ds, $peopleBase, "(mailAlias=$searchFor)", [ "uid","displayName","mobile","homePhone" ]);
 $users = ldap_get_entries($ds, $sr);
 
 $username = "FEHLER_BENUTZER_NICHT_GEFUNDEN";
