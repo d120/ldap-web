@@ -24,7 +24,7 @@ if (isset($_GET["group"])) {
   }
 } else {
   echo "<h3>Users</h3>";
-  $sr = ldap_search($ds, $peopleBase, "(objectclass=*)", [ "uid","displayName","mobile","homePhone","loginShell","sn" ]);
+  $sr = ldap_search($ds, $peopleBase, "(objectclass=*)", [ "uid","displayName","mobile","homePhone","loginShell","sn","givenName","mail","birthday","birthmonth","birthyear" ]);
   ldap_sort($ds, $sr, 'uid');
   $users = ldap_get_entries($ds, $sr);
 }
@@ -42,7 +42,7 @@ foreach($users as $u) {
     $shell = E($u['loginshell']);
     if (!$shell || $shell=='/bin/false' || $shell == '/sbin/nologin') continue;
   }
-  echo "<tr><td><a href='mailto:".E($u['uid'])."@d120.de'>".E($u['uid'])."</a></td>";
+  echo "<tr><td><a href='mailto:".E($u['mail'])."'>".E($u['uid'])."</a></td>";
   echo "<td>".E($u['displayname'])."</td>";
   echo "<td>".E($u['mobile'])."</td>";
   echo "<td>".E($u['homephone'])."</td>";
