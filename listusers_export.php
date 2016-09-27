@@ -56,7 +56,7 @@ if ($_GET['export'] == "vcf") {
 
 	// Set content type so the output gets recognized as vcard
 	header("Content-Type: text/vcard");
-	$filename = $_GET["group"] ? $_GET["group"] . ".vcf" : "contacts.vcf";
+	$filename = isset($_GET["group"]) && $_GET["group"] ? $_GET["group"] . ".vcf" : "contacts.vcf";
 	header("Content-Disposition: attachment; filename=". $filename);
 
 	// foreach user print its vcard data...
