@@ -67,6 +67,7 @@ if ($_GET['export'] == "vcf") {
 
 	// foreach user print its vcard data...
 	foreach ($users as $user) {
+		if(!$user['sn']) continue;
 		vcard_print_person($user);
 	}
 
