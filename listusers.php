@@ -12,7 +12,7 @@ include("header.php");
 echo "<div class=row>";
 
 echo "<div class='col-md-9'>";
-if (isset($_GET["group"])) {
+if ($_GET["group"]) {
   echo "<h3>Members of ".htmlentities($_GET["group"])."</h3>";
   $sr = ldap_search($ds, $groupBase, "(cn=".$_GET["group"].")");
   $members = ldap_get_entries($ds, $sr)[0]['member'];
