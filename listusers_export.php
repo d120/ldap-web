@@ -32,7 +32,7 @@ function vcard_print_person($user) {
 	$lastname = end($nameparts);
 	$mobile = vcard_E($user["mobile"]);
 	$homephone = vcard_E($user["homephone"]);
-	$email = vcard_E($user["uid"]) ."@d120.de";
+	$email = vcard_E($user["mail"]);
 
 	// Print vcard for this user
 	vcard_print("BEGIN:VCARD");
