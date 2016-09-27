@@ -28,6 +28,10 @@ if (isset($_GET["group"])) {
   ldap_sort($ds, $sr, 'uid');
   $users = ldap_get_entries($ds, $sr);
 }
+
+// Load any export functionality for listusers.php (does nothing per default)
+require "listusers_export.php";
+
 echo "<table class='table user-list'>";
 echo "<thead><tr><th>User Name</th><th>Full Name</th><th>Mobile</th><th>Home Phone</th><th></th></tr></thead>";
 echo "<tbody>\n\n";
@@ -69,6 +73,7 @@ echo "</div>";
 echo "<div class='col-md-3 hidden-print'>";
 echo "<h3>Quick actions</h3><div class=list-group>\n";
 echo "  <a href='listusers.php?filter=telefon&group=fachschaft' class=list-group-item>Telefonliste</a>\n";
+echo "  <a href='listusers.php?filter={$_GET['filter']}&group={$_GET['group']}&export=vcf' class='list-group-item' target='_blank'>VCF exportieren</a>\n";
 echo "</div>";
 
 
