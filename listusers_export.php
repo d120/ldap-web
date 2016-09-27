@@ -27,7 +27,7 @@ function vcard_E($str) {
 function vcard_print_person($user) {
 	// Get data from user object
 	// MUST exist
-	$firstname = vcard_E($user["givenName"]);
+	$firstname = vcard_E($user["givenname"]);
 	$lastname = vcard_E($user["sn"]);
 	// MAY exist
 	$mobile = vcard_E($user["mobile"]);
