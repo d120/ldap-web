@@ -73,7 +73,8 @@ echo "</div>";
 echo "<div class='col-md-3 hidden-print'>";
 echo "<h3>Quick actions</h3><div class=list-group>\n";
 echo "  <a href='listusers.php?filter=telefon&group=fachschaft' class=list-group-item>Telefonliste</a>\n";
-echo "  <a href='listusers.php?filter={$_GET['filter']}&group={$_GET['group']}&export=vcf' class='list-group-item' target='_blank'>VCF exportieren</a>\n";
+$query = isset($_SERVER["QUERY_STRING"]) ? $_SERVER["QUERY_STRING"] . "&" : "";
+echo "  <a href='listusers.php?{$query}export=vcf' class='list-group-item' target='_blank'>VCF exportieren</a>\n";
 echo "</div>";
 
 

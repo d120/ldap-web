@@ -4,7 +4,7 @@
  * Echos a line with needed \r\n at the end.
  * $line The line that gets echoed.
  */
-function vcard_print($line) {
+function vcard_print($line = '') {
 	echo $line . "\r\n";
 }
 
@@ -51,6 +51,7 @@ function vcard_print_person($user) {
 	if ($birthyear && $birthmonth && $birthday)
 		vcard_printf("BDAY:%'02u-%'02u-%'02u", $birthyear, $birthmonth, $birthday);
 	vcard_print("END:VCARD");
+	vcard_print();
 }
 
 
