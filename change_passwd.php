@@ -56,8 +56,8 @@ if ($_POST["change_pw"] && $_POST["userDN"] == $editDN) {
   <form action="change_passwd.php?<?=E($_SERVER["QUERY_STRING"])?>" method="post" name="ldapAccountMgrChangePassword" autocomplete="off">
 <input type="hidden" name="csrftoken" value="<?=E($_COOKIE["csrftoken"])?>">
 <div class="form-group">
-<label for="username">Username</label>
-<input type="text" class="form-control" name="userDN" id="username" value="<?=E($editDN)?>">
+<label for="userDN">Username</label>
+<input type="text" class="form-control" name="userDN" id="userDN" value="<?=E($editDN)?>">
 </div>
 <!--
 <div class="form-group">
