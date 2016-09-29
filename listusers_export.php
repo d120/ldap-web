@@ -16,8 +16,14 @@ function vcard_printf(/* $format, ...$args */) {
 	echo vcard_print($line);
 }
 
-function vcard_E($str) {
-	return html_entity_decode(E($str));
+function vcard_field($obj, $key) {
+	$key = strtolower($key);
+	if (in_array($key, $obj)) {
+		if ($obj[$key]["count"] > 0) {
+			return $obj[$key][0];
+		}
+	}
+	return false;
 }
 
 /**
@@ -27,16 +33,16 @@ function vcard_E($str) {
 function vcard_print_person($user) {
 	// Get data from user object
 	// MUST exist
-	$firstname = vcard_E($user["givenname"]);
-	$lastname = vcard_E($user["sn"]);
+	$firstname = vcard_field($user, "givenname");
+	$lastname = vcard_field($user, "sn");
 	// MAY exist
-	$mobile = vcard_E($user["mobile"]);
-	$homephone = vcard_E($user["homephone"]);
-	$email = vcard_E($user["mail"]);
-	$birthyear = vcard_E($user["birthyear"]);
-	$birthmonth = vcard_E($user["birthmonth"]);
-	$birthday = vcard_E($user["birthday"]);
-	$photo = base64_encode($user["jpegphoto"]);
+	$mobile = vcard_field($user, "mobile");
+	$homephone = vcard_field($user, "homephone");
+	$email = vcard_field($user, "mail");
+	$birthyear = vcard_field($user, "birthyear");
+	$birthmonth = vcard_field($user, "birthmonth");
+	$birthday = vcard_field($user, "birthday");
+	$photo = vcard_field($user, "jpegphoto");
 
 	// Print vcard for this user
 	vcard_print("BEGIN:VCARD");
@@ -52,7 +58,7 @@ function vcard_print_person($user) {
 	if ($birthyear && $birthmonth && $birthday)
 		vcard_printf("BDAY:%'02u-%'02u-%'02u", $birthyear, $birthmonth, $birthday);
 	if ($photo)
-		vcard_print("PHOTO;TYPE=JPEG;ENCODING=b:". $photo);
+		vcard_print("PHOTO;TYPE=JPEG;ENCODING=b:". base64_encode($photo));
 	vcard_print("END:VCARD");
 	vcard_print();
 }
