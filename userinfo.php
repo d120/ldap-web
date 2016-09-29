@@ -85,10 +85,19 @@ echo "</table>";
 
 echo "<table class=table>";
 foreach($data as $k=>$v) {
-  if(!is_array($v) || array_search($k, $shortfields) !== FALSE)continue;
+  if(!is_array($v) || array_search($k, $shortfields) !== FALSE)
+    continue;
   echo "<tr><td>".htmlentities($k)."</td><td><ul>";
   array_shift($v);
-  foreach($v as $l) echo "<li>".htmlentities($l)."</li>";
+  foreach($v as $l) {
+    if ($k == "jpegPhoto") {
+      echo "<li><img src='data:image/jpeg;base64,";
+      echo base64_encode($l);
+      echo "' style='width: 200px; height: 200px;' /></li>";
+    }
+    else
+      echo "<li>".htmlentities($l)."</li>";
+  }
   echo "</ul></td></tr>\n";
 }
 echo "</table>";
