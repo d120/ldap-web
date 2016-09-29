@@ -4,6 +4,18 @@
  * Echos a line with needed \r\n at the end.
  * $line The line that gets echoed.
  */
+function vcard_binary_print($line = '') {
+	if (strlen($line) > 75) {
+		echo substr($line, 0, 75) . "\r\n";
+		$line = substr($line, 75);
+		foreach (str_split($line, 74) as $l) {
+			echo " ". $l . "\r\n";
+		}
+	} else {
+		echo $line . "\r\n";
+	}
+}
+
 function vcard_print($line = '') {
 	echo $line . "\r\n";
 }
@@ -13,14 +25,15 @@ function vcard_print($line = '') {
  */
 function vcard_printf(/* $format, ...$args */) {
 	$line = call_user_func_array("sprintf", func_get_args());
-	echo vcard_print($line);
+	vcard_print($line);
 }
 
 function vcard_field($obj, $key) {
 	$key = strtolower($key);
 	if (in_array($key, $obj)) {
 		if ($obj[$key]["count"] > 0) {
-			return $obj[$key][0];
+			$value = $obj[$key][0];
+			return $value;
 		}
 	}
 	return false;
@@ -58,7 +71,7 @@ function vcard_print_person($user) {
 	if ($birthyear && $birthmonth && $birthday)
 		vcard_printf("BDAY:%'02u-%'02u-%'02u", $birthyear, $birthmonth, $birthday);
 	if ($photo)
-		vcard_print("PHOTO;TYPE=JPEG;ENCODING=b:". base64_encode($photo));
+		vcard_binary_print("PHOTO;ENCODING=b;TYPE=JPEG:". base64_encode($photo));
 	vcard_print("END:VCARD");
 	vcard_print();
 }
