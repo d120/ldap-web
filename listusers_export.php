@@ -36,6 +36,7 @@ function vcard_print_person($user) {
 	$birthyear = vcard_E($user["birthyear"]);
 	$birthmonth = vcard_E($user["birthmonth"]);
 	$birthday = vcard_E($user["birthday"]);
+	$photo = base64_encode($user["jpegphoto"]);
 
 	// Print vcard for this user
 	vcard_print("BEGIN:VCARD");
@@ -50,6 +51,8 @@ function vcard_print_person($user) {
 		vcard_printf("TEL;TYPE=home:%s", $homephone);
 	if ($birthyear && $birthmonth && $birthday)
 		vcard_printf("BDAY:%'02u-%'02u-%'02u", $birthyear, $birthmonth, $birthday);
+	if ($photo)
+		vcard_print("PHOTO;TYPE=JPEG;ENCODING=b:". $photo);
 	vcard_print("END:VCARD");
 	vcard_print();
 }

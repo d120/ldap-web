@@ -24,7 +24,7 @@ if (!empty($_GET["group"])) {
   }
 } else {
   echo "<h3>Users</h3>";
-  $sr = ldap_search($ds, $peopleBase, "(objectclass=*)", [ "uid","displayName","mobile","homePhone","loginShell","sn","givenName","mail","birthday","birthmonth","birthyear" ]);
+  $sr = ldap_search($ds, $peopleBase, "(objectclass=*)", [ "uid","displayName","mobile","homePhone","loginShell","sn","givenName","mail","birthday","birthmonth","birthyear","jpegPhoto" ]);
   ldap_sort($ds, $sr, 'uid');
   $users = ldap_get_entries($ds, $sr);
 }
