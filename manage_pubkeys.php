@@ -30,8 +30,7 @@ if (isset($_GET["modifyUser"])) $editDN = get_user_dn($_GET["modifyUser"]);
 function add_pubkey($editDN) {
    global $ds;
    require_csrftoken();
-   var_dump($_POST["pubkey"]);$newkey = trim(str_replace(array("\r", "\n"), '', $_POST["pubkey"]));
-   var_dump($newkey);
+   $newkey = trim(str_replace(array("\r", "\n"), '', $_POST["pubkey"]));
 
    if (strlen($newkey) < 9) return "Das ist zu kurz für einen Key!";
    if (substr($newkey, 0, 4) !== "ssh-") return "Das sieht nicht nach einem SSH Public Key aus.";
