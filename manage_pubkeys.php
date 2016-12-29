@@ -1,7 +1,7 @@
 <?php
 /**
  *  ldap-web
- *  Copyright (C) 2016  Max Weller
+ *  Copyright (C) 2016  Max Weller, Johannes Lauinger
  *
  *  This program is free software: you can redistribute it and/or modify
  *  it under the terms of the GNU Affero General Public License as published
@@ -48,26 +48,19 @@ if ($_POST["add_pubkey"] && $_POST["userDN"] == $editDN) {
      echo "<div class='alert alert-danger'><h4>Fehler</h4>$ok</div>";
    }
 }
-
 ?>
 
-
-  <form action="manage_pubkeys.php?<?=E($_SERVER["QUERY_STRING"])?>" method="post" name="ldapAccountMgrAddPubkey" autocomplete="off">
-<input type="hidden" name="csrftoken" value="<?=E($_COOKIE["csrftoken"])?>">
-<div class="form-group">
-<label for="userDN">Username</label>
-<input type="text" class="form-control" name="userDN" id="userDN" value="<?=E($editDN)?>">
-</div>
-
-<div class="form-group">
-<label for="pubkey">Neuer SSH Public Key (wird hinzugefügt)</label>
-<textarea class="form-control" name="pubkey" id="pubkey" placeholder="Beispiel: ssh-ed25519 AAAA... wesen@pc"></textarea>
-</div>
-
-
-
-<input type="submit" class="btn btn-primary" name="add_pubkey" value="Public Key hinzufügen">
-
+<form action="manage_pubkeys.php?<?=E($_SERVER["QUERY_STRING"])?>" method="post" name="ldapAccountMgrAddPubkey" autocomplete="off">
+  <input type="hidden" name="csrftoken" value="<?=E($_COOKIE["csrftoken"])?>">
+  <div class="form-group">
+    <label for="userDN">Username</label>
+    <input type="text" class="form-control" name="userDN" id="userDN" value="<?=E($editDN)?>">
+  </div>
+  <div class="form-group">
+    <label for="pubkey">Neuer SSH Public Key (wird hinzugefügt)</label>
+    <textarea class="form-control" name="pubkey" id="pubkey" placeholder="Beispiel: ssh-ed25519 AAAA... wesen@pc"></textarea>
+  </div>
+  <input type="submit" class="btn btn-primary" name="add_pubkey" value="Public Key hinzufügen">
 </form>
 
 
@@ -120,5 +113,6 @@ array_shift($pubkeys);
 </table>
 
 <style>
-td.breakall { word-break: break-all; white-space: pre-wrap; font: 10pt monospace; }
+  td.breakall { word-break: break-all; white-space: pre-wrap; font: 10pt monospace; }
 </style>
+
