@@ -28,7 +28,7 @@ if (1 === preg_match( "#<emailaddress>([a-zA-Z0-9.@-]+)</emailaddress>#i", $post
   $searchFor = ldap_escape($emailaddress[1], null, LDAP_ESCAPE_FILTER);
   if (strstr($searchFor, '@')) $searchFor = substr($searchFor, 0, strpos($searchFor, '@'));
 
-  $sr = ldap_search($ds, $peopleBase, "(mail=$searchFor)", [ "uid","displayName","mobile","homePhone" ]);
+  $sr = ldap_search($ds, $peopleBase, "(mailAlias=$searchFor)", [ "uid","displayName","mobile","homePhone" ]);
   $users = ldap_get_entries($ds, $sr);
 
   $username = "FEHLER___BENUTZER_NICHT_GEFUNDEN";
@@ -68,7 +68,7 @@ if (1 === preg_match( "#<emailaddress>([a-zA-Z0-9.@-]+)</emailaddress>#i", $post
     <DomainRequired>off</DomainRequired>
     <LoginName><?= $username ?></LoginName>
     <SPA>off</SPA>
-    <SSL>on</SSL>
+    <Encryption>TLS</Encryption>
     <AuthRequired>on</AuthRequired>
   </Protocol>
 
