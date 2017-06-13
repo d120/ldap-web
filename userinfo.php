@@ -21,6 +21,12 @@ require_bind_user_basicauth();
 
 include("header.php");
 
+if (isset($_GET["user"])) {
+  $theUserDN = "uid=$_GET[user]," . $peopleBase;
+} else {
+  $theUserDN = $boundUserDN;
+}
+
 if (count($_POST) && $_POST["submit_phone"]) {
     if (! $_POST["mobile_phone"])  $_POST["mobile_phone"] = array();
     if (! $_POST["home_phone"])  $_POST["home_phone"] = array();
@@ -31,30 +37,60 @@ if (count($_POST) && $_POST["submit_phone"]) {
     } else {
       $birthday = $birthmonth = $birthyear = array();
     }
-    $ok = ldap_modify($ds, $boundUserDN, array("mobile" => $_POST["mobile_phone"], "homePhone" => $_POST["home_phone"],
-                        "birthday" => $birthday, "birthmonth"=>$birthmonth, "birthyear"=>$birthyear ));
-   if ($ok) echo "Änderungen gespeichert. <script>setTimeout(function(){location=location;},900);</script>";
-   else echo "ERROR: ".ldap_error($ds);
-   exit;
+    $obj = array("mobile" => $_POST["mobile_phone"], "homePhone" => $_POST["home_phone"],
+                        "birthday" => $birthday, "birthmonth"=>$birthmonth, "birthyear"=>$birthyear );
+    if (count($_FILES) && is_uploaded_file($_FILES['jpegPhoto']['tmp_name'])) {
+        try {
+            $tmpfname = tempnam(sys_get_temp_dir(), 'FOO'); // good 
+            $fn = $_FILES['jpegPhoto']['tmp_name'];
+            $size = getimagesize($fn);
+            $ratio = $size[0]/$size[1]; // width/height
+            if ($size[0]<500 && $size[1]<500) {
+              $width=$size[0]; $height=$size[1];
+            } elseif( $ratio > 1) {
+                $width = 500; $height = 500/$ratio;
+            } else {
+                $width = 500*$ratio; $height = 500;
+            }
+            var_dump($size,$ratio,$width,$height);echo"<hr>";
+            $src = imagecreatefromstring(file_get_contents($fn));
+            $dst = imagecreatetruecolor($width,$height);
+            imagecopyresampled($dst,$src,0,0,0,0,$width,$height,$size[0],$size[1]);
+            imagedestroy($src);
+            imagejpeg($dst, $tmpfname, 50);
+            imagedestroy($dst);
+
+
+            $obj['jpegPhoto'] = file_get_contents($tmpfname);
+            unlink($tmpfname);
+        } catch (Exception $e) {
+            echo "Bild konnte nicht verarbeitet werden! $e";
+            exit;
+        }
+    }
+    $ok = ldap_modify($ds, $theUserDN, $obj);
+    if ($ok) echo "Änderungen gespeichert. <script>xxxsetTimeout(function(){location=location;},900);</script>";
+    else echo "ERROR: ".ldap_error($ds);
+    exit;
 }
 
-$sr = ldap_read($ds, $boundUserDN, "(objectclass=*)");
+$sr = ldap_read($ds, $theUserDN, "(objectclass=*)");
 $entry = ldap_first_entry($ds, $sr);
 $data = ldap_get_attributes($ds, $entry);
 
 echo "<div class=row><div class=col-md-6>";  //------columns -------
 echo "<h3>Group Membership</h3>";
 
-$sr = ldap_search($ds, $groupBase, "(member=$boundUserDN)", ["cn"]);
+$sr = ldap_search($ds, $groupBase, "(member=$theUserDN)", ["cn"]);
 $groups = ldap_get_entries($ds, $sr);
 foreach($groups as $group) {
-  if (is_array($group))
-    echo "<li>".$group["cn"][0]."</li>";
+    if (is_array($group))
+        echo "<li>".$group["cn"][0]."</li>";
 }
 
 echo "</div><div class=col-md-6>";  //------columns -------
 echo "<h3>Phone Numbers</h3>";
-echo "<form action='?' method='post' class='form'>";
+echo "<form action='".E($_SERVER["PHP_SELF"]."?".$_SERVER["QUERY_STRING"])."' method='post' class='form' enctype='multipart/form-data'>";
 
 echo "<div class='form-group'><label for='mobile_phone'>Mobile phone number</label>";
 echo "<input type='text' class='form-control' id='mobile_phone' name='mobile_phone' id='mobile_phone' value='".E($data['mobile'])."' pattern='\\+?[0-9 ()]+'></div>";
@@ -66,6 +102,9 @@ $birthdate = sprintf('%04d-%02d-%02d', $data['birthyear'][0] , $data['birthmonth
 echo "<div class='form-group'><label for='birthdate'>Birth Date</label>";
 echo "<input type='date' class='form-control' id='birthdate' name='birthdate' value='".E($birthdate)."' ></div>";
 
+
+echo "<div class='form-group'><label for='jpegPhoto'>Profile Image</label>";
+echo "<input type='file' class='' id='jpegPhoto' name='jpegPhoto'></div>";
 
 
 echo "<div class='form-group'>";

@@ -47,6 +47,7 @@ foreach($users as $u) {
   echo "<td>".E($u['mobile'])."</td>";
   echo "<td>".E($u['homephone'])."</td>";
   echo "<td class=hidden-print>";
+  echo "<a href='userinfo.php?user=".E($u['uid'])."'><img alt=View src=info.png></a> ";
   if ($isAdmin) echo "<a href='change_passwd.php?modifyUser=".E($u['uid'])."'><img alt=Edit src=wrench.png></a>";
   echo "</td>";
 //var_dump($u);

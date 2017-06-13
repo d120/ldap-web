@@ -85,7 +85,7 @@ if ($_POST["del_pubkey"] && $_POST["userDN"] == $editDN) {
    }
 }
 
-$sr = ldap_read($ds, $boundUserDN, "(objectclass=*)");
+$sr = ldap_read($ds, $editDN, "(objectclass=*)");
 $entry = ldap_first_entry($ds, $sr);
 $data = ldap_get_attributes($ds, $entry);
 $pubkeys = $data["sshPublicKey"];
