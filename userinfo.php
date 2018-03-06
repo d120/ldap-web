@@ -30,6 +30,7 @@ if (isset($_GET["user"])) {
 if (count($_POST) && $_POST["submit_phone"]) {
     if (! $_POST["mobile_phone"])  $_POST["mobile_phone"] = array();
     if (! $_POST["home_phone"])  $_POST["home_phone"] = array();
+    if (! $_POST["login_shell"]) $_POST["login_shell"] = array();
     if ($_POST["birthdate"] && ($timestamp = strtotime($_POST["birthdate"])) !== false) {
       $birthday = date('j', $timestamp);
       $birthmonth = date('n', $timestamp);
@@ -37,7 +38,7 @@ if (count($_POST) && $_POST["submit_phone"]) {
     } else {
       $birthday = $birthmonth = $birthyear = array();
     }
-    $obj = array("mobile" => $_POST["mobile_phone"], "homePhone" => $_POST["home_phone"],
+    $obj = array("mobile" => $_POST["mobile_phone"], "homePhone" => $_POST["home_phone"], "loginShell" =>$_POST["login_shell"],
                         "birthday" => $birthday, "birthmonth"=>$birthmonth, "birthyear"=>$birthyear );
     if (count($_FILES) && is_uploaded_file($_FILES['jpegPhoto']['tmp_name'])) {
         try {
@@ -96,6 +97,9 @@ echo "<div class='form-group'><label for='mobile_phone'>Mobile phone number</lab
 echo "<input type='text' class='form-control' id='mobile_phone' name='mobile_phone' id='mobile_phone' value='".E($data['mobile'])."' pattern='\\+?[0-9 ()]+'></div>";
 echo "<div class='form-group'><label for='mobile_phone'>Home phone number</label>";
 echo "<input type='text' class='form-control' id='home_phone' name='home_phone' value='".E($data['homePhone'])."' pattern='\\+?[0-9 )(]+'></div>";
+echo "<div class='form-group'><label for='login_shell'>Login Shell</label>";
+echo "<input type='text' class='form-control' id='login_shell' name='login_shell' value='".E($data['loginShell'])."'></div>";
+
 
 $birthdate = sprintf('%04d-%02d-%02d', $data['birthyear'][0] , $data['birthmonth'][0] , $data['birthday'][0]);
 
