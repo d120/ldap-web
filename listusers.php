@@ -33,7 +33,7 @@ if (!empty($_GET["group"])) {
 require "listusers_export.php";
 
 echo "<table class='table user-list'>";
-echo "<thead><tr><th>User Name</th><th>Full Name</th><th>Mobile</th><th>Home Phone</th><th></th></tr></thead>";
+echo "<thead><tr><th>User Name</th><th>Full Name</th><th>Email</th><th>Mobile / Home Phone</th><th></th></tr></thead>";
 echo "<tbody>\n\n";
 foreach($users as $u) {
   if(!$u['uid'])continue;
@@ -42,10 +42,11 @@ foreach($users as $u) {
     $shell = E($u['loginshell']);
     if (!$shell || $shell=='/bin/false' || $shell == '/sbin/nologin') continue;
   }
-  echo "<tr><td><a href='mailto:".E($u['mail'])."'>".E($u['uid'])."</a></td>";
+  echo "<tr><td><a href='userinfo.php?user=".E($u['uid'])."'>".E($u['uid'])."</a></td>";
   echo "<td>".E($u['displayname'])."</td>";
-  echo "<td>".E($u['mobile'])."</td>";
-  echo "<td>".E($u['homephone'])."</td>";
+  echo "<td><a href='mailto:".E($u['mail'])."'>".str_replace('tu-darmstadt.de','tu...',str_replace('fachschaft.informatik.tu-darmstadt.de','fachsch...',E($u['mail'])))."</a></td>";
+  echo "<td>".E($u['mobile'])."<br>";
+  echo "".E($u['homephone'])."</td>";
   echo "<td class=hidden-print>";
   echo "<a href='userinfo.php?user=".E($u['uid'])."'><img alt=View src=info.png></a> ";
   if ($isAdmin) echo "<a href='change_passwd.php?modifyUser=".E($u['uid'])."'><img alt=Edit src=wrench.png></a>";
