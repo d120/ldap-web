@@ -34,6 +34,9 @@ if (isset($_GET['tok'])) {
 
 include("header.php");
 
+$sr = ldap_read($ds, $editDN, "(objectclass=*)");
+$entry = ldap_first_entry($ds, $sr);
+$userAttrs = ldap_get_attributes($ds, $entry);
 ?>
 
 <h3>Change LDAP Password</h3>
@@ -125,7 +128,7 @@ https://glados.d120.de/usermgmt/change_passwd.php?tok=$encpwd
 <p>Achtung: Das alte Passwort wird beim Versenden des Links direkt ungültig.</p>
 
 <div class="form-group">
-<label for="pw2">Senden an Mail-Adresse</label>
+<label for="pw2">Senden an Mail-Adresse (<a href="javascript:" onclick="document.getElementById('mailadr').value='<?= $userAttrs["mail"][0]?>';"><?= $userAttrs["mail"][0]?></a>)</label>
 <input type="email" class="form-control" name="mailadr" id="mailadr">
 </div>
 
