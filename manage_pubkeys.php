@@ -33,7 +33,7 @@ function add_pubkey($editDN) {
    $newkey = trim(str_replace(array("\r", "\n"), '', $_POST["pubkey"]));
 
    if (strlen($newkey) < 9) return "Das ist zu kurz für einen Key!";
-   if (substr($newkey, 0, 4) !== "ssh-") return "Das sieht nicht nach einem SSH Public Key aus.";
+   if (substr($newkey, 0, 4) !== "ssh-" && substr($newkey, 0, 6) !== "ecdsa-") return "Das sieht nicht nach einem SSH Public Key aus.";
    if (strpos($newkey, ' ') === false) return "Das sieht nicht nach einem SSH Public Key aus.";
 
    $ok = ldap_mod_add($ds, $editDN, array("sshPublicKey" => $newkey));
