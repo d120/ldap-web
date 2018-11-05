@@ -79,54 +79,54 @@ $sr = ldap_read($ds, $theUserDN, "(objectclass=*)");
 $entry = ldap_first_entry($ds, $sr);
 $data = ldap_get_attributes($ds, $entry);
 
-echo "<div class=row><div class=col-md-6>";  //------columns -------
-echo "<h3>Group Membership</h3>";
+echo "<div class=row>\n<div class=col-md-6>";  //------columns -------
+echo "<h3>Group Membership</h3><ul>";
 
 $sr = ldap_search($ds, $groupBase, "(member=$theUserDN)", ["cn"]);
 $groups = ldap_get_entries($ds, $sr);
 foreach($groups as $group) {
     if (is_array($group))
-        echo "<li>".$group["cn"][0]."</li>";
+        echo "<li><a href='listusers.php?group=".$group["cn"][0]."'>".$group["cn"][0]."</a></li>";
 }
 
-echo "</div><div class=col-md-6>";  //------columns -------
+echo "</ul></div>\n<div class=col-md-6>";  //------columns -------
 echo "<h3>Phone Numbers</h3>";
-echo "<form action='".E($_SERVER["PHP_SELF"]."?".$_SERVER["QUERY_STRING"])."' method='post' class='form' enctype='multipart/form-data'>";
+echo "<form action='".E($_SERVER["PHP_SELF"]."?".$_SERVER["QUERY_STRING"])."' method='post' class='form' enctype='multipart/form-data'>\n";
 
 echo "<div class='form-group'><label for='mobile_phone'>Mobile phone number</label>";
-echo "<input type='text' class='form-control' id='mobile_phone' name='mobile_phone' id='mobile_phone' value='".E($data['mobile'])."' pattern='\\+?[0-9 ()]+'></div>";
+echo "<input type='text' class='form-control' id='mobile_phone' name='mobile_phone' id='mobile_phone' value='".E($data['mobile'])."' pattern='\\+?[0-9 ()]+'></div>\n";
 echo "<div class='form-group'><label for='mobile_phone'>Home phone number</label>";
-echo "<input type='text' class='form-control' id='home_phone' name='home_phone' value='".E($data['homePhone'])."' pattern='\\+?[0-9 )(]+'></div>";
+echo "<input type='text' class='form-control' id='home_phone' name='home_phone' value='".E($data['homePhone'])."' pattern='\\+?[0-9 )(]+'></div>\n";
 echo "<div class='form-group'><label for='login_shell'>Login Shell</label>";
-echo "<input type='text' class='form-control' id='login_shell' name='login_shell' value='".E($data['loginShell'])."'></div>";
+echo "<input type='text' class='form-control' id='login_shell' name='login_shell' value='".E($data['loginShell'])."'></div>\n";
 
 
 $birthdate = sprintf('%04d-%02d-%02d', $data['birthyear'][0] , $data['birthmonth'][0] , $data['birthday'][0]);
 
 echo "<div class='form-group'><label for='birthdate'>Birth Date</label>";
-echo "<input type='date' class='form-control' id='birthdate' name='birthdate' value='".E($birthdate)."' ></div>";
+echo "<input type='date' class='form-control' id='birthdate' name='birthdate' value='".E($birthdate)."' ></div>\n";
 
 
 echo "<div class='form-group'><label for='jpegPhoto'>Profile Image</label>";
-echo "<input type='file' class='' id='jpegPhoto' name='jpegPhoto'></div>";
+echo "<input type='file' class='' id='jpegPhoto' name='jpegPhoto'></div>\n";
 
 
 echo "<div class='form-group'>";
-echo "<input type='submit' name='submit_phone' value='Änderungen speichern' class='btn btn-primary'></div>";
+echo "<input type='submit' name='submit_phone' value='Änderungen speichern' class='btn btn-primary'></div>\n";
 
 echo "</form>";
 
-echo "</div></div>";  //------columns -------
+echo "</div></div>\n";  //------columns -------
 
-echo "<h3>Detailed Account Information</h3>";
+echo "<h3>Detailed Account Information</h3>\n";
 $shortfields = ['uidNumber', 'gidNumber', 'uid', 'givenName', 'sn', 'displayName', 'cn', 'birthday', 'birthmonth', 'birthyear'];
-echo "<table class=table><tr>";
+echo "<table class=table><tr>\n";
 foreach($shortfields as $k) echo '<th>'.$k.'</th>';
 echo '</tr><tr>';
 foreach($shortfields as $k) echo '<td>'.E($data[$k]).'</td>';
-echo "</table>";
+echo "</table>\n";
 
-echo "<table class=table>";
+echo "<table class=table>\n";
 foreach($data as $k=>$v) {
   if(!is_array($v) || array_search($k, $shortfields) !== FALSE)
     continue;
