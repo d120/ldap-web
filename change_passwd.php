@@ -65,7 +65,19 @@ if ($_POST["change_pw"] && $_POST["userDN"] == $editDN) {
 }
 
 ?>
-
+<script>
+function genpw(){
+  var length = 20,
+      wishlist = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz~!@-#$";
+  var x = Array(length);
+  for(var i=0; i<length;i++) x[i] = wishlist[Math.floor(crypto.getRandomValues(new Uint32Array(1))[0] / (0xffffffff + 1) * (wishlist.length + 1))];
+  return x.join("");
+}
+function randpw() {
+  document.ldapAccountMgrChangePassword.new_pw.value = document.ldapAccountMgrChangePassword.pw2.value = genpw();
+  document.ldapAccountMgrChangePassword.new_pw.type="text";
+}
+</script>
 
 <form action="change_passwd.php?<?=E($_SERVER["QUERY_STRING"])?>" method="post" name="ldapAccountMgrChangePassword" autocomplete="off">
 <input type="hidden" name="csrftoken" value="<?=E($_COOKIE["csrftoken"])?>">
@@ -82,7 +94,7 @@ if ($_POST["change_pw"] && $_POST["userDN"] == $editDN) {
 -->
 
 <div class="form-group">
-<label for="new_pw">Neues Passwort</label>
+<label for="new_pw">Neues Passwort (<a href='javascript:randpw()'>zufällig generieren</a>)</label>
 <input type="password" class="form-control" name="new_pw" id="new_pw" placeholder="min. 8 Zeichen">
 </div>
 
