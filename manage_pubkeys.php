@@ -19,10 +19,11 @@
 
 include ".init.php";
 require_bind_user_basicauth();
-include("header.php");
 
+$isAdmin = is_group_member($boundUserDN, "cn=fss,$groupBase");
 $editDN = $boundUserDN;
 if (isset($_GET["modifyUser"])) $editDN = get_user_dn($_GET["modifyUser"]);
+include("header.php");
 ?>
 
 <h3>SSH Public Key hinzufügen</h3>
@@ -73,7 +74,7 @@ function del_pubkey($editDN) {
    $delkey = $_POST["pubkey"];
 
    $ok = ldap_mod_del($ds, $editDN, array("sshPublicKey" => $delkey));
-   if ($ok) return TRUE; else return "LDAP-Fehler";
+   if ($ok) return TRUE; else return "LDAP-Fehler: ".ldap_error($ds);
 }
 
 if ($_POST["del_pubkey"] && $_POST["userDN"] == $editDN) {

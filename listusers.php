@@ -12,9 +12,14 @@ include("header.php");
 echo "<div class=row>";
 
 echo "<div class='col-md-9'>";
+$searchBase = $peopleBase;
+if (!empty($_GET["baseDN"])) {
+  $searchBase = $_GET["baseDN"];
+}
+
 if (!empty($_GET["group"])) {
   echo "<h3>Members of ".htmlentities($_GET["group"])."</h3>";
-  $sr = ldap_search($ds, $groupBase, "(cn=".$_GET["group"].")");
+  /*$sr = ldap_search($ds, $groupBase, "(cn=".$_GET["group"].")");
   $members = ldap_get_entries($ds, $sr)[0]['member'];
   natcasesort($members);
   $users = [];
@@ -22,12 +27,20 @@ if (!empty($_GET["group"])) {
     $sr2 = ldap_read($ds, $member, '(objectclass=*)');
     $users[] = ldap_get_entries($ds, $sr2)[0];
   }
+  */
+  $query =  "(memberOf=cn=".$_GET['group'].",$groupBase)";
+} else if (!empty($_GET["query"])) {
+  $query = $_GET["query"];
+  
 } else {
   echo "<h3>Users</h3>";
-  $sr = ldap_search($ds, $peopleBase, "(objectclass=*)", [ "uid","displayName","mobile","homePhone","loginShell","sn","givenName","mail","birthday","birthmonth","birthyear","jpegPhoto" ]);
-  ldap_sort($ds, $sr, 'uid');
-  $users = ldap_get_entries($ds, $sr);
+  $query =  "(objectclass=*)";
 }
+echo "<form action='listusers.php' method='get' class='hidden-print'><input style='width:100%;background:#33333a;color:#aaa;border:1px solid #44444b;padding:5px;' type=search name=query value='".E($query)."'></form><br>";
+
+$sr = ldap_search($ds, $searchBase, $query, [ "uid","displayName","mobile","homePhone","loginShell","sn","givenName","mail","birthday","birthmonth","birthyear","jpegPhoto","userPassword","pgpKey" ]);
+ldap_sort($ds, $sr, 'uid');
+$users = ldap_get_entries($ds, $sr);
 
 // Load any export functionality for listusers.php (does nothing per default)
 require "listusers_export.php";
@@ -42,14 +55,17 @@ foreach($users as $u) {
     $shell = E($u['loginshell']);
     if (!$shell || $shell=='/bin/false' || $shell == '/sbin/nologin') continue;
   }
-  echo "<tr><td><a href='userinfo.php?user=".E($u['uid'])."'>".E($u['uid'])."</a></td>";
+  $class="";
+  if (strpos(E($u['userpassword']), "account_locked") !== false) $class="account-locked";
+  echo "<tr class='$class' x='".E($u['userpassword'])."'><td><a href='userinfo.php?user=".E($u['uid'])."'>".E($u['uid'])."</a></td>";
   echo "<td>".E($u['displayname'])."</td>";
   echo "<td><a href='mailto:".E($u['mail'])."'>".str_replace('tu-darmstadt.de','tu...',str_replace('fachschaft.informatik.tu-darmstadt.de','fachsch...',E($u['mail'])))."</a></td>";
   echo "<td>".E($u['mobile'])."<br>";
   echo "".E($u['homephone'])."</td>";
   echo "<td class=hidden-print>";
   echo "<a href='userinfo.php?user=".E($u['uid'])."'><img alt=View src=info.png></a> ";
-  if ($isAdmin) echo "<a href='change_passwd.php?modifyUser=".E($u['uid'])."'><img alt=Edit src=wrench.png></a>";
+  if ($isAdmin) echo "<a href='change_passwd.php?modifyUser=".E($u['uid'])."'><img alt=Edit src=wrench.png></a> ";
+  if ($u['pgpkey']) echo "<a href='data:application/octet-stream;base64,".base64_encode($u['pgpkey'][0])."' download='".E($u['uid']).".asc'><img alt='PGP Key' src=css/cert.png></a> ";
   echo "</td>";
 //var_dump($u);
   echo "</tr>\n";
@@ -67,6 +83,7 @@ table li{ word-break: break-all; white-space: pre-wrap; font: 10pt monospace; }
     h3 { font-size:14pt; font-family: Times; }
     a::after{display:none}
 }
+.account-locked,.account-locked a {color:#777; text-decoration: line-through;}
 </style>
 
 <?php
@@ -82,14 +99,7 @@ echo "</div>";
 
 echo "<h3>Filter by group</h3><div class=list-group>\n";
 echo "  <a href=? class=list-group-item>(all)</a>\n";
-$sr = ldap_search($ds, $groupBase, "(objectclass=*)", ["cn"]);
-$group_items = ldap_get_entries($ds, $sr);
-$groups = [];
-foreach($group_items as $group) {
-  if (!$group['cn'])continue;
-  $groups[] = $group["cn"][0];
-}
-natcasesort($groups);
+$groups = get_group_list();
 foreach($groups as $cn) {
     echo "  <a href='?group=$cn' class='list-group-item ".($cn==$_GET["group"]?"active":"")."'>$cn</a>\n";
 }

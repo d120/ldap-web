@@ -62,6 +62,13 @@ global $ds;
     exit;
   }
 }
+function check_ldap_error($ok, $errtitle) {
+  global $ds;
+  if (!$ok) {
+    echo "<div class='alert alert-danger'><h4>$errtitle</h4>\n<p>".ldap_error($ds)."</p></div>";
+    exit;
+  }
+}
 
 function bind_user($user,$pw){
 global $ds;
@@ -115,20 +122,39 @@ function print_attrs_table($data, $ignoreAttrs) {
   foreach($data as $k=>$v) {
     if(!is_array($v) || array_search($k, $ignoreAttrs) !== FALSE)
       continue;
-    echo "<tr><td>".htmlentities($k)."</td><td><ul>";
+    echo "<tr class='attr-row key-$k'><td>".htmlentities($k)."</td><td class='attr-value'><ul>";
     array_shift($v);
     foreach($v as $l) {
       if ($k == "jpegPhoto") {
         echo "<li><img src='data:image/jpeg;base64,";
         echo base64_encode($l);
         echo "' style='width: 200px; height: 200px;' /></li>";
-      }
-      else
+      } elseif ($k == "pgpKey") {
+        echo "<li><textarea style='width:80%;height:60px;' onfocus='this.select();'>".htmlentities($l)."</textarea></li>";
+      } else
         echo "<li>".htmlentities($l)."</li>";
     }
     echo "</ul></td></tr>\n";
   }
   echo "</table>";
 
+}
+
+function get_group_list() {
+  global $ds, $groupBase;
+  $sr = ldap_search($ds, $groupBase, "(objectclass=*)", ["cn"]);
+  $group_items = ldap_get_entries($ds, $sr);
+  $groups = [];
+  foreach($group_items as $group) {
+    if (!$group['cn'])continue;
+    $groups[] = $group["cn"][0];
+  }
+  natcasesort($groups);
+  return $groups;
+}
+
+function random_passwd() {
+  $bytes = openssl_random_pseudo_bytes(8);
+  return bin2hex($bytes);
 }
 

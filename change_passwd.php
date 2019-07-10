@@ -28,6 +28,7 @@ if (isset($_GET['tok'])) {
 
 } else {
   require_bind_user_basicauth();
+  $isAdmin = is_group_member($boundUserDN, "cn=fss,$groupBase");
   $editDN = $boundUserDN;
   if (isset($_GET["modifyUser"])) $editDN = get_user_dn($_GET["modifyUser"]);
 }
@@ -50,8 +51,9 @@ function change_pw($editDN) {
 
    $newhash = makehash($_POST["new_pw"]);echo "<!-- $old \n$new -->";
 
+   ldap_modify($ds, $editDN, array("comment" => array()));
    $ok = ldap_modify($ds, $editDN, array("userPassword" => $newhash));
-   if ($ok) return TRUE; else return "LDAP-Fehler";
+   if ($ok) return TRUE; else return "LDAP-Fehler: ".ldap_error($ds);
 }
 
 if ($_POST["change_pw"] && $_POST["userDN"] == $editDN) {
@@ -123,6 +125,7 @@ if(isset($_GET['modifyUser'])) {
 
     $ok = ldap_modify($ds, $editDN, array("userPassword" => $newhash));
     if ($ok) {
+      ldap_modify($ds, $editDN, array("comment" => array()));
       $mailcontent = "Hallo,
 um dein Passwort fuer den Account $_GET[modifyUser] zu setzen, klicke auf den folgenden Link:
 
@@ -147,6 +150,26 @@ https://glados.d120.de/usermgmt/change_passwd.php?tok=$encpwd
 <input type="submit" class="btn btn-secondary" name="send_reset_link" value="Versenden">
 
 </form>
+
+<form action="change_passwd.php?<?=E($_SERVER["QUERY_STRING"])?>" method="post">
+<h3>Account sperren</h3>
+<?php
+if ($_POST["lockout_account"]):
+  $ok = ldap_modify($ds, $editDN, array("userPassword" => "account_locked_since=".date("Y-m-d-His").":".random_passwd() , "comment"=>"account_locked=".date("Y-m-d-His")."\naccount_locked_note=".$_POST["comment"]) );
+  check_ldap_error($ok,"LDAP-Modify userPassword failed");
+  $ok = ldap_mod_del($ds, $editDN, array("sshPublicKey" => array() ));
+  if (!$ok)echo "LDAP-Modify sshPublicKey failed";
+  echo "<div class='alert alert-success'>Account gesperrt</div>";
+else:
+?>
+<p>Achtung: Das Passwort und die SSH-Keys des Benutzers werden zurückgesetzt. Dieser Vorgang kann nur durch Setzen eines neuen Passworts und Neueintrag der SSH-Keys umgekehrt werden.</p>
+<p>Sperrvermerk: <input type="text" name="comment"></p>
+<input type="submit" name="lockout_account" value="Account sperren" class="btn btn-danger" onclick="return confirm('Achtung: Das Passwort und die SSH-Keys des Benutzers werden zurückgesetzt. Dieser Vorgang kann nur durch Setzen eines neuen Passworts und Neueintrag der SSH-Keys umgekehrt werden.')">
+<?php endif; ?>
+
+</form>
+
+<br>
 <?php } ?>
 
 </div>
