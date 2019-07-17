@@ -9,3 +9,13 @@ $groupBase = "ou=Group,$baseDN";
 $serviceBindDN = "cn=something,ou=Services,$baseDN";
 $serviceBindPassword = "someprettysecurepasswordgoeshere";
 
+$enableOauth2 = FALSE; // set to TRUE to enable Oauth2 OpenID provider
+// $databaseConfig = array('dsn' => 'mysql:dbname=ldapweb;host=localhost', 'username' => 'ldapweb', 'password' => '...');
+
+$openidConnectPrivkey = "-----BEGIN RSA PRIVATE KEY-----
+...
+-----END RSA PRIVATE KEY-----";
+$openidConnectPubkey = "-----BEGIN PUBLIC KEY-----
+...
+-----END PUBLIC KEY-----";
+
