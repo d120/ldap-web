@@ -1,6 +1,7 @@
 <!doctype html>
 <html><head>
 <meta charset="utf-8">
+<meta name="robots" content="noindex">
 <?php if ($baseHref): ?> <base href="<?= E($baseHref) ?>"> <?php endif; ?>
 <link rel=stylesheet href=css/bootstrap.min.css>
 <title><?= $docTitle ?> LDAP Account Management</title>
