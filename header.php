@@ -13,7 +13,6 @@
 <li <?=CONTROLLER=="change_passwd.php"?'class=active':''?>><a href=change_passwd.php>Change Password</a></li>
 <li <?=CONTROLLER=="listusers.php"?'class=active':''?>><a href=listusers.php>User List</a></li>
 <li <?=CONTROLLER=="birthdays.php"?'class=active':''?>><a href=birthdays.php>Birthdays</a></li>
-<li <?=CONTROLLER=="sync.php"?'class=active':''?>><a href=sync.php>Sync</a></li>
 </ul><ul class="nav navbar-nav pull-right">
 <li><a href=/>GLaDOS Home</a></li>
 </ul></div></nav>
